@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@layer base {
+	:root {
+		/* Design tokens (RGB triplets for easy alpha usage: rgb(var(--token) / 0.8)) */
+		--color-bg: 248 250 252; /* slate-50 */
+		--color-surface: 255 255 255;
+		--color-text: 15 23 42; /* slate-900 */
+		--color-muted: 71 85 105; /* slate-600 */
+		--color-primary: 11 42 58; /* deep petrol */
+		--color-accent: 43 182 115; /* green accent */
+		--color-border: 15 23 42;
+
+		--radius: 14px;
+	}
+
+	html {
+		color-scheme: light;
+		scroll-behavior: smooth;
+	}
+
+	html.dark {
+		color-scheme: dark;
+		--color-bg: 3 7 18; /* slate-950-ish */
+		--color-surface: 15 23 42; /* slate-900 */
+		--color-text: 226 232 240; /* slate-200 */
+		--color-muted: 148 163 184; /* slate-400 */
+		--color-primary: 14 116 144; /* teal-700 */
+		--color-accent: 43 182 115;
+		--color-border: 226 232 240;
+	}
+
+	body {
+		margin: 0;
+		font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+		background: rgb(var(--color-bg));
+		color: rgb(var(--color-text));
+	}
+
+	/* Accessible focus */
+	:focus-visible {
+		outline: 2px solid rgb(var(--color-accent));
+		outline-offset: 3px;
+	}
+
+	/* Skip link (visible on focus) */
+	.skip-link {
+		position: absolute;
+		top: 12px;
+		left: 12px;
+		z-index: 100;
+		padding: 10px 12px;
+		border-radius: 12px;
+		background: rgb(var(--color-surface));
+		border: 1px solid rgb(0 0 0 / 0.12);
+		color: rgb(var(--color-text));
+		text-decoration: none;
+		transform: translateY(-200%);
+		transition: transform 0.15s ease;
+	}
+
+	.skip-link:focus {
+		transform: translateY(0);
+	}
+}
+
+@layer components {
+	.site-container {
+		@apply mx-auto w-full max-w-[1100px] px-4;
+	}
+
+	.section {
+		@apply py-16 md:py-24;
+	}
+
+	.card {
+		@apply rounded-[var(--radius)] border bg-[rgb(var(--color-surface))];
+		border-color: rgb(var(--color-border) / 0.12);
+	}
+
+	.btn {
+		@apply inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-medium no-underline;
+	}
+
+	.btn-primary {
+		@apply bg-[rgb(var(--color-primary))] text-white hover:opacity-90;
+	}
+
+	.btn-secondary {
+		@apply border bg-[rgb(var(--color-surface))] text-[rgb(var(--color-text))] hover:opacity-90;
+		border-color: rgb(var(--color-border) / 0.12);
+	}
+}

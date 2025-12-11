@@ -1,0 +1,207 @@
+<button
+	type="button"
+	class="scroll-top"
+	aria-label="Zum Seitenanfang"
+	data-scroll-top
+	aria-hidden="true"
+	tabindex="-1"
+>
+	<span class="scroll-top-inner" aria-hidden="true">
+		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path
+				d="M12 5l-7 7m7-7 7 7M12 5v14"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	</span>
+</button>
+
+<style>
+	.scroll-top {
+		position: fixed;
+		right: max(18px, env(safe-area-inset-right));
+		bottom: max(18px, env(safe-area-inset-bottom));
+		z-index: 55;
+		height: 56px;
+		width: 56px;
+		border-radius: 999px;
+		border: 0;
+		padding: 3px;
+		background: conic-gradient(
+			from 200deg,
+			rgb(var(--color-accent)) calc(var(--progress, 0) * 1turn),
+			rgb(var(--color-border) / 0.10) 0
+		);
+		color: rgb(var(--color-text));
+		box-shadow: 0 16px 50px rgb(0 0 0 / 0.22);
+
+		opacity: 0;
+		transform: translateY(10px);
+		pointer-events: none;
+		transition: opacity 0.18s ease, transform 0.18s ease;
+	}
+
+	.scroll-top[data-visible='true'] {
+		opacity: 1;
+		transform: translateY(0);
+		pointer-events: auto;
+	}
+
+	.scroll-top-inner {
+		display: grid;
+		place-items: center;
+		height: 100%;
+		width: 100%;
+		border-radius: 999px;
+		border: 1px solid rgb(var(--color-border) / 0.10);
+		background: rgb(var(--color-surface) / 0.78);
+		backdrop-filter: blur(14px);
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 0.10),
+			0 8px 26px rgb(0 0 0 / 0.18);
+		transition: transform 0.16s ease, background 0.16s ease;
+	}
+
+	.scroll-top:hover {
+		opacity: 0.98;
+	}
+
+	.scroll-top:hover .scroll-top-inner {
+		transform: translateY(-1px);
+	}
+
+	/* override the global focus outline with a nicer ring for this control */
+	.scroll-top:focus-visible {
+		outline: none;
+	}
+
+	.scroll-top:focus-visible .scroll-top-inner {
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 0.10),
+			0 8px 26px rgb(0 0 0 / 0.18),
+			0 0 0 4px rgb(var(--color-accent) / 0.18);
+	}
+</style>
+<!-- 
+<script is:inline>
+	(() => {
+		const btn = document.querySelector('[data-scroll-top]');
+		if (!(btn instanceof HTMLButtonElement)) return;
+
+		const reduceMotion =
+			window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		let isAutoScrolling = false;
+
+		const setVisible = (visible) => {
+			btn.dataset.visible = visible ? 'true' : 'false';
+			btn.setAttribute('aria-hidden', visible ? 'false' : 'true');
+			btn.tabIndex = visible ? 0 : -1;
+		};
+
+		const update = () => {
+			const doc = document.documentElement;
+			const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
+			const y = window.scrollY;
+			const p = Math.min(1, Math.max(0, y / maxScroll));
+			btn.style.setProperty('--progress', String(p));
+
+			// Standard behavior: show after scrolling down, hide again at the top.
+			setVisible(!isAutoScrolling && y > 600);
+		};
+		update();
+
+		window.addEventListener('scroll', update, { passive: true });
+		btn.addEventListener('click', () => {
+			// UX: hide immediately on click (and keep in sync while scrolling up)
+			setVisible(false);
+			btn.style.setProperty('--progress', '0');
+
+			isAutoScrolling = true;
+			window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+
+			// Some mobile browsers can report scroll positions in a way that ends our loop too early.
+			// Keep syncing until we're truly at the top for a few frames (or until a timeout).
+			const start = performance.now();
+			let settledFrames = 0;
+			const done = () => {
+				isAutoScrolling = false;
+				setVisible(false);
+				btn.style.setProperty('--progress', '0');
+				update();
+			};
+
+			const tick = () => {
+				update(); // while auto-scrolling, update() always hides the button
+
+				if (Math.abs(window.scrollY) <= 2) {
+					settledFrames += 1;
+				} else {
+					settledFrames = 0;
+				}
+
+				if (settledFrames >= 3 || performance.now() - start > 3000) {
+					done();
+					return;
+				}
+				requestAnimationFrame(tick);
+			};
+
+			requestAnimationFrame(tick);
+			// Safety: ensure we never get stuck in auto mode (e.g. tab switch)
+			window.setTimeout(() => {
+				if (isAutoScrolling) done();
+			}, 3200);
+		});
+	})();
+</script>
+ -->
+
+ <script is:inline>
+  (() => {
+    const btn = document.querySelector('[data-scroll-top]');
+    if (!(btn instanceof HTMLButtonElement)) return;
+
+    const THRESHOLD = 400;
+    const reduceMotion =
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const setVisible = (visible) => {
+      btn.dataset.visible = visible ? 'true' : 'false';
+      btn.setAttribute('aria-hidden', visible ? 'false' : 'true');
+      btn.tabIndex = visible ? 0 : -1;
+    };
+
+    const onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      // nur anzeigen, wenn wirklich weiter runter gescrollt wurde
+      setVisible(y > THRESHOLD);
+      // Fortschrittsring, falls du ihn behalten willst
+      const doc = document.documentElement;
+      const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
+      const p = Math.min(1, Math.max(0, y / maxScroll));
+      btn.style.setProperty('--progress', String(p));
+    };
+
+    // Initialzustand
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    btn.addEventListener('click', () => {
+      // Sofort ausblenden
+      setVisible(false);
+      btn.style.setProperty('--progress', '0');
+
+      // nach oben scrollen
+      window.scrollTo({
+        top: 0,
+        behavior: reduceMotion ? 'auto' : 'smooth',
+      });
+    });
+  })();
+</script>
+

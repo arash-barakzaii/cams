@@ -1,0 +1,32 @@
+---
+import { company } from '../data/company';
+
+type Props = {
+	title?: string;
+	description?: string;
+};
+
+const { title, description } = Astro.props;
+
+const siteTitle = company.seo.siteName;
+const resolvedTitle = title ? `${title} | ${siteTitle}` : siteTitle;
+const resolvedDescription = description ?? company.seo.defaultDescription;
+
+const canonicalBase = Astro.site ?? new URL('http://localhost:4321');
+const canonical = new URL(Astro.url.pathname, canonicalBase).toString();
+---
+
+<title>{resolvedTitle}</title>
+<meta name="description" content={resolvedDescription} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:site_name" content={siteTitle} />
+<meta property="og:title" content={resolvedTitle} />
+<meta property="og:description" content={resolvedDescription} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={resolvedTitle} />
+<meta name="twitter:description" content={resolvedDescription} />
+

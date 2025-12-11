@@ -1,0 +1,120 @@
+---
+import { services } from '../data/services';
+
+const endpoint = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT as string | undefined;
+const hasEndpoint = Boolean(endpoint);
+---
+
+<form
+	class="grid gap-4"
+	method="POST"
+	action={endpoint ?? '#'}
+	aria-describedby={!hasEndpoint ? 'formspree-hint' : undefined}
+>
+	{!hasEndpoint && (
+		<p id="formspree-hint" class="text-sm text-[rgb(var(--color-muted))]">
+			Hinweis: Setze <code class="rounded bg-black/5 px-1 py-0.5">PUBLIC_FORMSPREE_ENDPOINT</code>, damit das
+			Formular E-Mails versendet.
+		</p>
+	)}
+
+	<div class="grid gap-2">
+		<label class="text-sm font-medium" for="name">Name</label>
+		<input
+			class="h-11 rounded-xl border bg-[rgb(var(--color-surface))] px-3 text-sm text-[rgb(var(--color-text))]"
+			style="border-color: rgb(var(--color-border) / 0.12);"
+			id="name"
+			name="name"
+			autocomplete="name"
+			required
+		/>
+	</div>
+
+	<div class="grid gap-2">
+		<label class="text-sm font-medium" for="email">E-Mail</label>
+		<input
+			class="h-11 rounded-xl border bg-[rgb(var(--color-surface))] px-3 text-sm text-[rgb(var(--color-text))]"
+			style="border-color: rgb(var(--color-border) / 0.12);"
+			id="email"
+			name="email"
+			type="email"
+			autocomplete="email"
+			required
+		/>
+	</div>
+
+	<div class="grid gap-2">
+		<label class="text-sm font-medium" for="service">Leistung</label>
+		<select
+			class="h-11 rounded-xl border bg-[rgb(var(--color-surface))] px-3 text-sm text-[rgb(var(--color-text))]"
+			style="border-color: rgb(var(--color-border) / 0.12);"
+			id="service"
+			name="service"
+		>
+			<option value="">Bitte auswählen</option>
+			{services.map((s) => (
+				<option value={s.title}>{s.title}</option>
+			))}
+		</select>
+	</div>
+
+	<div class="grid gap-2">
+		<label class="text-sm font-medium" for="message">Nachricht</label>
+		<textarea
+			class="min-h-36 rounded-xl border bg-[rgb(var(--color-surface))] px-3 py-3 text-sm text-[rgb(var(--color-text))]"
+			style="border-color: rgb(var(--color-border) / 0.12);"
+			id="message"
+			name="message"
+			required
+		></textarea>
+	</div>
+
+	<button class="btn btn-primary w-full" type="submit" disabled={!hasEndpoint}>
+		Nachricht senden
+	</button>
+
+	<p id="form-status" class="text-sm text-[rgb(var(--color-muted))]" role="status" aria-live="polite"></p>
+</form>
+
+{hasEndpoint && (
+	<script>
+		(() => {
+			const form = document.currentScript?.previousElementSibling;
+			if (!(form instanceof HTMLFormElement)) return;
+
+			const button = form.querySelector('button[type="submit"]');
+			const status = form.querySelector('#form-status');
+
+			form.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				if (!(button instanceof HTMLButtonElement)) return;
+				if (!(status instanceof HTMLElement)) return;
+
+				status.textContent = 'Sende Nachricht …';
+				button.disabled = true;
+
+				try {
+					const res = await fetch(form.action, {
+						method: 'POST',
+						body: new FormData(form),
+						headers: { Accept: 'application/json' }
+					});
+
+					if (!res.ok) {
+						status.textContent = 'Leider gab es ein Problem. Bitte versuche es erneut.';
+						button.disabled = false;
+						return;
+					}
+
+					status.textContent = 'Danke – Nachricht wurde gesendet.';
+					form.reset();
+				} catch {
+					status.textContent = 'Netzwerkfehler. Bitte prüfe deine Verbindung und versuche es erneut.';
+				} finally {
+					button.disabled = false;
+				}
+			});
+		})();
+	</script>
+)}
+
