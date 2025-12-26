@@ -7,8 +7,8 @@
 		--color-surface: 255 255 255;
 		--color-text: 15 23 42; /* slate-900 */
 		--color-muted: 71 85 105; /* slate-600 */
-		--color-primary: 11 42 58; /* deep petrol */
-		--color-accent: 43 182 115; /* green accent */
+		--color-primary: 73 7 6; /* deep petrol */
+		--color-accent: 73 7 6; /* green accent */
 		--color-border: 15 23 42;
 
 		--radius: 14px;
@@ -25,8 +25,8 @@
 		--color-surface: 15 23 42; /* slate-900 */
 		--color-text: 226 232 240; /* slate-200 */
 		--color-muted: 148 163 184; /* slate-400 */
-		--color-primary: 14 116 144; /* teal-700 */
-		--color-accent: 43 182 115;
+		--color-primary: 71 85 105; /* teal-700 */
+		--color-accent: 71 85 105;
 		--color-border: 226 232 240;
 	}
 

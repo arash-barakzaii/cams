@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/sections/Hero.astro';
 import ServicesOverview from '../components/sections/ServicesOverview.astro';
 import WhyUs from '../components/sections/WhyUs.astro';
+import KeyPoints from '../components/sections/KeyPoints.astro';
 import ProjectsTeaser from '../components/sections/ProjectsTeaser.astro';
 import ProcessSteps from '../components/sections/ProcessSteps.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
@@ -12,11 +13,14 @@ import ContactSection from '../components/sections/ContactSection.astro';
 <Layout
 	title="Startseite"
 	description="Baumgutachten und Bauberatung für Kommunen und Unternehmen."
+	headerTransparent={true}
+
 >
 	<Hero />
+	<KeyPoints />
 	<ServicesOverview />
 	<WhyUs />
 	<ProjectsTeaser />
-	<ProcessSteps />
 	<ContactSection />
+	<ProcessSteps />
 </Layout>

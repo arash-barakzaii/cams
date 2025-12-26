@@ -9,9 +9,10 @@ import ScrollToTop from '../components/ScrollToTop.astro';
 type Props = {
 	title?: string;
 	description?: string;
+	headerTransparent?: boolean;
 };
 
-const { title, description } = Astro.props;
+const { title, description, headerTransparent = false } = Astro.props; 
 ---
 
 <!doctype html>
@@ -34,11 +35,28 @@ const { title, description } = Astro.props;
 	</head>
 	<body class="min-h-screen bg-[rgb(var(--color-bg))] text-[rgb(var(--color-text))]">
 		<a class="skip-link" href="#main">Zum Inhalt springen</a>
-		<Header />
-		<main id="main">
+		<Header transparent={headerTransparent} />
+		<main id="main" class:list={[headerTransparent ? "" : "pt-[70px] md:pt-[75px]"]} >
 			<slot />
 		</main>
 		<ScrollToTop />
 		<Footer />
 	</body>
 </html>
+<style>
+main {
+    /* Standard: Kein Padding */
+    padding-top: 0;
+}
+
+/* Nur wenn Header NICHT transparent (andere Seiten) */
+body:not(:has(header[class*="bg-transparent"])) main {
+    padding-top: 70px;
+}
+
+@media (min-width: 768px) {
+    body:not(:has(header[class*="bg-transparent"])) main {
+        padding-top: 75px;
+    }
+}
+</style>

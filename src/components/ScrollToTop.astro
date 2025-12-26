@@ -73,7 +73,6 @@
 		transform: translateY(-1px);
 	}
 
-	/* override the global focus outline with a nicer ring for this control */
 	.scroll-top:focus-visible {
 		outline: none;
 	}
@@ -84,81 +83,8 @@
 			0 8px 26px rgb(0 0 0 / 0.18),
 			0 0 0 4px rgb(var(--color-accent) / 0.18);
 	}
+	
 </style>
-<!-- 
-<script is:inline>
-	(() => {
-		const btn = document.querySelector('[data-scroll-top]');
-		if (!(btn instanceof HTMLButtonElement)) return;
-
-		const reduceMotion =
-			window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-		let isAutoScrolling = false;
-
-		const setVisible = (visible) => {
-			btn.dataset.visible = visible ? 'true' : 'false';
-			btn.setAttribute('aria-hidden', visible ? 'false' : 'true');
-			btn.tabIndex = visible ? 0 : -1;
-		};
-
-		const update = () => {
-			const doc = document.documentElement;
-			const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
-			const y = window.scrollY;
-			const p = Math.min(1, Math.max(0, y / maxScroll));
-			btn.style.setProperty('--progress', String(p));
-
-			// Standard behavior: show after scrolling down, hide again at the top.
-			setVisible(!isAutoScrolling && y > 600);
-		};
-		update();
-
-		window.addEventListener('scroll', update, { passive: true });
-		btn.addEventListener('click', () => {
-			// UX: hide immediately on click (and keep in sync while scrolling up)
-			setVisible(false);
-			btn.style.setProperty('--progress', '0');
-
-			isAutoScrolling = true;
-			window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-
-			// Some mobile browsers can report scroll positions in a way that ends our loop too early.
-			// Keep syncing until we're truly at the top for a few frames (or until a timeout).
-			const start = performance.now();
-			let settledFrames = 0;
-			const done = () => {
-				isAutoScrolling = false;
-				setVisible(false);
-				btn.style.setProperty('--progress', '0');
-				update();
-			};
-
-			const tick = () => {
-				update(); // while auto-scrolling, update() always hides the button
-
-				if (Math.abs(window.scrollY) <= 2) {
-					settledFrames += 1;
-				} else {
-					settledFrames = 0;
-				}
-
-				if (settledFrames >= 3 || performance.now() - start > 3000) {
-					done();
-					return;
-				}
-				requestAnimationFrame(tick);
-			};
-
-			requestAnimationFrame(tick);
-			// Safety: ensure we never get stuck in auto mode (e.g. tab switch)
-			window.setTimeout(() => {
-				if (isAutoScrolling) done();
-			}, 3200);
-		});
-	})();
-</script>
- -->
 
  <script is:inline>
   (() => {
@@ -178,9 +104,7 @@
 
     const onScroll = () => {
       const y = window.scrollY || document.documentElement.scrollTop || 0;
-      // nur anzeigen, wenn wirklich weiter runter gescrollt wurde
       setVisible(y > THRESHOLD);
-      // Fortschrittsring, falls du ihn behalten willst
       const doc = document.documentElement;
       const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
       const p = Math.min(1, Math.max(0, y / maxScroll));
@@ -192,11 +116,9 @@
     window.addEventListener('scroll', onScroll, { passive: true });
 
     btn.addEventListener('click', () => {
-      // Sofort ausblenden
       setVisible(false);
       btn.style.setProperty('--progress', '0');
 
-      // nach oben scrollen
       window.scrollTo({
         top: 0,
         behavior: reduceMotion ? 'auto' : 'smooth',
