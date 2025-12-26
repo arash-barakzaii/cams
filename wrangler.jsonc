@@ -1,5 +1,5 @@
 {
-  "name": "cams-website",
+  "name": "cams",
   "compatibility_date": "2025-12-26",
   "assets": {
     "directory": "./dist"
